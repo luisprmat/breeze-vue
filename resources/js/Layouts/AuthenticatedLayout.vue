@@ -1,12 +1,18 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
+import ResponsiveNavButton from '@/Components/ResponsiveNavButton.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 import { getActiveLanguage, loadLanguageAsync } from 'laravel-vue-i18n';
+
+import { useThemeStore } from '@/stores/themes';
+const globalTheme = useThemeStore()
+onMounted(() => globalTheme.init())
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -37,8 +43,48 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <!-- Language Selector Dropdown -->
+                            <!-- Theme Selector Dropdown -->
                             <div class="ms-3 relative">
+                                <Dropdown align="right" width="48">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md">
+                                            <button
+                                                type="button"
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                                            >
+                                                {{ $t('Theme') }}
+
+                                                <svg
+                                                    class="ms-2 -me-0.5 h-4 w-4"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </template>
+
+                                    <template #content>
+                                        <DropdownButton
+                                            v-for="theme in ['light', 'dark', 'system']"
+                                            :active="globalTheme.currentTheme === theme"
+                                            @click="globalTheme.updateTheme(theme)"
+                                            :key="theme"
+                                        >
+                                            {{ $t(`themes.${theme}`) }}
+                                        </DropdownButton>
+                                    </template>
+                                </Dropdown>
+                            </div>
+
+                            <!-- Language Selector Dropdown -->
+                            <div class="relative">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -79,7 +125,7 @@ const showingNavigationDropdown = ref(false);
                             </div>
 
                             <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
+                            <div class="relative">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -157,6 +203,26 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             {{ $t('Dashboard') }}
                         </ResponsiveNavLink>
+                    </div>
+
+                    <!-- Theme Selector Options -->
+                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                        <div class="px-4">
+                            <div class="font-bold text-base text-gray-800 dark:text-gray-200">
+                                {{ $t('Theme') }}
+                            </div>
+                        </div>
+
+                        <div class="mt-3 space-y-1">
+                            <ResponsiveNavButton
+                                v-for="theme in ['light', 'dark', 'system']"
+                                :active="globalTheme.currentTheme === theme"
+                                @click="globalTheme.updateTheme(theme)"
+                                :key="theme"
+                            >
+                                {{ $t(`themes.${theme}`) }}
+                            </ResponsiveNavButton>
+                        </div>
                     </div>
 
                     <!-- Language Selector Options -->
