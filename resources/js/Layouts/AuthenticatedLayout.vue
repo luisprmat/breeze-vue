@@ -159,6 +159,28 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                     </div>
 
+                    <!-- Language Selector Options -->
+                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                        <div class="px-4">
+                            <div class="font-bold text-base text-gray-800 dark:text-gray-200">
+                                {{ $t('Language') }}
+                            </div>
+                        </div>
+
+                        <div class="mt-3 space-y-1">
+                            <ResponsiveNavLink
+                                v-for="locale in $page.props.availableLocales"
+                                :href="route('change-locale', locale)"
+                                :active="getActiveLanguage() === locale"
+                                @click="loadLanguageAsync(locale)"
+                                :key="locale"
+                                as="button"
+                            >
+                                {{ $t(`locales.${locale}`) }}
+                            </ResponsiveNavLink>
+                        </div>
+                    </div>
+
                     <!-- Responsive Settings Options -->
                     <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                         <div class="px-4">
